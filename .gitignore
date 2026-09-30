@@ -1,0 +1,13 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Android build output (isme API key hoti hai)
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/app/build

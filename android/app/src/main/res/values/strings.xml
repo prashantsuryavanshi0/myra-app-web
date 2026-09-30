@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Myra</string>
+    <string name="title_activity_main">Myra</string>
+    <string name="package_name">com.aayat.assistant</string>
+    <string name="custom_url_scheme">com.aayat.assistant</string>
+    <string name="accessibility_description">Lets Myra press Send in WhatsApp for you and do phone actions like Back, Home, Lock and Screenshot when you ask by voice. Myra does not read or store your screen content.</string>
+</resources>
