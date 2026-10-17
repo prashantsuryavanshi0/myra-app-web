@@ -133,8 +133,11 @@ export class LiveSessionManager {
           },
           onerror: (err: any) => {
             console.error("Live API Error:", err);
-            this.stop();
-            this.onClosed(String(err?.message || "error"));
+            if (err?.message) {
+              this.stop();
+              this.onClosed(String(err.message));
+            }
+            // agar message nahi toh stop mat karo — onclose asli reason ke saath aayega
           },
         },
       });

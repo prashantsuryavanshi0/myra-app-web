@@ -72,9 +72,17 @@ export async function getMyraResponse(prompt: string, history: { sender: "user" 
     }
 
     return { text: response.text || "Ho gaya. Ab khush?", outcomes };
-  } catch (error) {
+  } catch (error: any) {
+    chatSession = null;
     console.error("[Gemini chat] failed:", error);
-    return { text: "Uff, mera dimaag kharab ho gaya hai. Try again later.", outcomes };
+    const msg = String(error?.message || error || "");
+    if (/api.?key|invalid.?key|401|403|UNAUTHENTICATED|PERMISSION_DENIED/i.test(msg)) {
+      return { text: "🔑 API key nahi hai ya galat hai. Netlify me GEMINI_API_KEY set karo.", outcomes };
+    }
+    if (/quota|429|RESOURCE_EXHAUSTED/i.test(msg)) {
+      return { text: "⚠️ Free quota khatam ho gaya. Thodi der baad try karo.", outcomes };
+    }
+    return { text: `Kuch gadbad ho gayi: ${msg || "unknown error"}. Dobara try karo.`, outcomes };
   }
 }
 

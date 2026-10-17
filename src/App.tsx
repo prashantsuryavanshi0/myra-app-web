@@ -207,6 +207,10 @@ export default function App() {
       showToast("📴 Internet nahi hai. Connect hote hi main sun lungi.");
       return;
     }
+    if (!process.env.GEMINI_API_KEY) {
+      showToast("🔑 GEMINI_API_KEY build me nahi hai. Netlify env variable daal ke 'Clear cache and deploy' karo.", 15000);
+      return;
+    }
     stopWakeListening();
     setPower("awake");
     lastActivity.current = Date.now();
@@ -231,12 +235,20 @@ export default function App() {
       if (liveRef.current !== session) return;
       liveRef.current = null;
       if (/quota|exceeded|429|RESOURCE_EXHAUSTED/i.test(reason)) {
-        goToSleep("⚠️ Free quota abhi khatam hai. Thodi der baad “Hello Myra” bolna.");
+        goToSleep('⚠️ Free quota abhi khatam hai. Thodi der baad “Hello Myra” bolna.');
+      } else if (/api.?key|invalid.?key|401|403|UNAUTHENTICATED|PERMISSION_DENIED/i.test(reason)) {
+        showToast('🔑 API key galat ya missing hai. Netlify me GEMINI_API_KEY check karo aur redeploy karo.', 15000);
+        setPower('off');
+      } else if (/model|404|NOT_FOUND/i.test(reason)) {
+        showToast('🤖 Model nahi mila. config.ts me LIVE_MODEL check karo.', 12000);
+        setPower('off');
       } else if (/permission|NotAllowed|denied/i.test(reason)) {
         setShowPermissionModal(true);
         goToSleep();
-      } else if (powerRef.current === "awake") {
-        goToSleep(navigator.onLine ? undefined : "📴 Internet chala gaya. Wapas aate hi bulana.");
+      } else if (powerRef.current === 'awake') {
+        goToSleep(navigator.onLine
+          ? `⚠️ Gemini se connect nahi ho paayi: ${reason || 'unknown error'}`
+          : '📴 Internet chala gaya. Wapas aate hi bulana.');
       }
     };
 
